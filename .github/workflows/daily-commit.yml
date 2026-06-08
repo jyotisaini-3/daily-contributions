@@ -1,0 +1,25 @@
+name: Daily Contribution
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # 12:00 UTC, adjust for 6 PM IST (12:30 UTC? Wait, calculate)
+  workflow_dispatch:
+
+jobs:
+  contribute:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make daily change
+        run: |
+          echo "Daily commit at $(date)" >> README.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Daily contribution: $(date +%Y-%m-%d)"
+          git push
