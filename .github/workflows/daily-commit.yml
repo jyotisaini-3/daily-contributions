@@ -1,25 +1,27 @@
-name: Daily Contribution
+name: Daily GitHub Contribution
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # 12:00 UTC, adjust for 6 PM IST (12:30 UTC? Wait, calculate)
+    - cron: '30 12 * * *'   # 12:30 UTC = 6:00 PM IST
   workflow_dispatch:
 
 jobs:
-  contribute:
+  daily-commit:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Make daily change
+      - name: Update daily log
         run: |
-          echo "Daily commit at $(date)" >> README.md
+          echo "## $(date -u +'%Y-%m-%d %H:%M UTC') - Automated daily contribution" >> daily-log.md
+          echo "Jyoti Saini - Maintaining consistent activity." >> daily-log.md
+          echo "Research focus: Autonomous Intelligent Systems, Distributed AI & Accelerated Computing." >> daily-log.md
+
+      - name: Commit and Push
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git commit -m "Daily contribution: $(date +%Y-%m-%d)"
+          git add daily-log.md
+          git commit -m "Daily contribution - $(date -u +'%Y-%m-%d')" || echo "No changes"
           git push
